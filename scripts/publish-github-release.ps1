@@ -46,7 +46,8 @@ try {
         $upload=$release.upload_url -replace '\{.*$',''
         if(([uri]$upload).Host -ne 'uploads.github.com'){throw 'Unexpected release upload host'}
         $upload+='?name='+[Uri]::EscapeDataString($file)
-        Invoke-RestMethod -Uri $upload -Method Post -Headers $headers -ContentType 'application/octet-stream' -InFile $path | Out-Null
+        try {Invoke-RestMethod -Uri $upload -Method Post -Headers $headers -ContentType 'application/octet-stream' -InFile $path | Out-Null}
+        catch {throw "GitHub asset upload failed for $file. If your network blocks uploads.github.com, use the repository's Publish verified Windows release workflow to publish GitHub-built artifacts instead."}
     }
     $release=Invoke-RestMethod -Uri "$api/releases/$($release.id)" -Headers $headers
     foreach($file in $files){if(-not($release.assets | Where-Object {$_.name -eq $file -and $_.state -eq 'uploaded'})){throw "Release upload not complete: $file"}}

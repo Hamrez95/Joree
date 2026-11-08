@@ -23,7 +23,11 @@ pwsh -NoProfile -File scripts/build-windows.ps1
 
 The Playwright config starts the UI server when needed. Windows build outputs go to `release/`, which stays out of Git. The shipped host is in `windows/`; `src-tauri/` is an earlier scaffold.
 
-The Windows package version lives in `windows/Directory.Build.props`. Release notes live in `docs/releases/vVERSION.md`. Maintainers with an existing authorized GitHub Git credential can prepare a draft with `pwsh -File scripts/publish-github-release.ps1`; add `-Publish` only when the commit is pushed and the assets are ready. The script checks existing asset hashes and won't overwrite different uploads.
+The Windows package version lives in `windows/Directory.Build.props`. Release notes live in `docs/releases/vVERSION.md`.
+
+To publish, run **Publish verified Windows release** from Actions with the successful **Windows build and tests** run ID and its exact commit SHA. It downloads the artifacts built on GitHub, checks their hashes, uploads the five assets, and publishes the release. This doesn't upload a binary from your workstation.
+
+Where direct GitHub asset uploads are permitted, maintainers with an existing authorized GitHub Git credential can also prepare a draft with `pwsh -File scripts/publish-github-release.ps1`; add `-Publish` when the commit is pushed and the assets are ready. The local script checks existing asset hashes and won't overwrite different uploads.
 
 Launch the built `Joree.exe --self-test` to run persistence/window-placement smoke checks. Results go to a fresh `Joree-selftest-*` folder under the Windows temporary directory.
 

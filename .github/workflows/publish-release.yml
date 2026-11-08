@@ -1,0 +1,61 @@
+name: Publish verified Windows release
+on:
+  workflow_dispatch:
+    inputs:
+      build_run_id:
+        description: Successful Windows build run ID
+        required: true
+        type: string
+      commit_sha:
+        description: Exact commit checked by that build
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BUILD_RUN_ID: ${{ inputs.build_run_id }}
+      EXPECTED_SHA: ${{ inputs.commit_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.commit_sha }}
+      - name: Verify the source build
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_sha=$(gh run view "$BUILD_RUN_ID" --repo "$GITHUB_REPOSITORY" --json headSha --jq .headSha)
+          conclusion=$(gh run view "$BUILD_RUN_ID" --repo "$GITHUB_REPOSITORY" --json conclusion --jq .conclusion)
+          workflow=$(gh run view "$BUILD_RUN_ID" --repo "$GITHUB_REPOSITORY" --json workflowName --jq .workflowName)
+          test "$build_sha" = "$EXPECTED_SHA"
+          test "$conclusion" = success
+          test "$workflow" = 'Windows build and tests'
+      - name: Download the files built on GitHub
+        run: gh run download "$BUILD_RUN_ID" --repo "$GITHUB_REPOSITORY" --name joree-windows-preview --dir release
+      - name: Verify the download hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd release
+          tr -d '\r' < SHA256SUMS.txt | sha256sum --check -
+      - name: Publish the preview and its five download assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(node -p "require('./package.json').version")
+          tag="v$version"
+          if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$EXPECTED_SHA" --title "Joree $tag - Your first little sip" --notes-file "docs/releases/$tag.md" --draft
+          fi
+          target=$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json targetCommitish --jq .targetCommitish)
+          test "$target" = "$EXPECTED_SHA"
+          gh release upload "$tag" --repo "$GITHUB_REPOSITORY" release/JoreeSetup.exe "release/Joree-$version-win-x64.zip" release/Joree-lesson-template.md release/INSTALL.md release/SHA256SUMS.txt
+          gh release edit "$tag" --repo "$GITHUB_REPOSITORY" --draft=false --latest
