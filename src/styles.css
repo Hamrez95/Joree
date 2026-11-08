@@ -3954,6 +3954,7 @@ html, body { overflow-x: hidden; }
   overflow-x: hidden;
   scrollbar-width: thin;
 }
+.collection-panel:has(.collection-tree) + .library-filters { margin-top: 9px; }
 .collection-tree-row { display: flex; min-width: 0; align-items: center; gap: 4px; }
 .collection-node {
   display: flex;
@@ -4043,6 +4044,7 @@ html, body { overflow-x: hidden; }
 .small-viewport .collection-panel { padding: 5px 7px; }
 .small-viewport .collection-panel-heading > strong { font-size: 14px; }
 .small-viewport .collection-tree { max-height: 92px; }
+.small-viewport .collection-panel:has(.collection-tree) + .library-filters { margin-top: 7px; }
 .small-viewport .collection-node { min-height: 25px; font-size: 12px; }
 .small-viewport .collection-create { min-height: 25px; font-size: 11px; }
 .small-viewport .collection-inline-actions button { width: 23px; min-height: 22px; }
