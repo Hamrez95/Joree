@@ -9,12 +9,17 @@ namespace Joree.Desktop;
 internal sealed class MainForm : Form
 {
     public const string WindowTitle = "جرعه – Joree";
+    private const int ToggleHotkeyId = 0x4A52;
+    private const uint ModifierControl = 0x0002;
+    private const uint ModifierNoRepeat = 0x4000;
+    private const uint VirtualKeyJ = 0x4A;
+    private const int WmHotkey = 0x0312;
     private const string Origin = "https://joree.local";
     private readonly WebView2 browser = new() { Dock = DockStyle.Fill, DefaultBackgroundColor = Color.Transparent };
     private readonly NotifyIcon tray;
     private readonly SqliteStateStore store;
     private readonly System.Windows.Forms.Timer placementTimer = new() { Interval = 650 };
-    private bool exiting, compact, ready;
+    private bool exiting, compact, ready, hotkeyRegistered;
     private readonly bool forceTopMost;
     private Rectangle expandedBounds;
     protected override CreateParams CreateParams
@@ -34,7 +39,7 @@ internal sealed class MainForm : Form
         Bounds = ReadPlacement(); expandedBounds = Bounds;
         store = new SqliteStateStore(AppPaths.Database);
         Controls.Add(browser); tray = CreateTray();
-        Shown += async (_, _) => await InitializeBrowser();
+        Shown += async (_, _) => { RegisterToggleHotkey(); await InitializeBrowser(); };
         Move += (_, _) => SchedulePlacement(); Resize += (_, _) => SchedulePlacement();
         placementTimer.Tick += (_, _) => { placementTimer.Stop(); SavePlacement(); };
         FormClosing += (_, args) => { SavePlacement(); if (!exiting) { args.Cancel = true; Hide(); } };
@@ -52,7 +57,7 @@ internal sealed class MainForm : Form
         menu.Items.Add("تنظیمات", null, async (_, _) => await OpenPage("settings"));
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("خروج کامل", null, (_, _) => { exiting = true; Close(); });
-        var icon = new NotifyIcon { Icon = Icon, Text = "جرعه — دوبار کلیک برای بازکردن", Visible = true, ContextMenuStrip = menu };
+        var icon = new NotifyIcon { Icon = Icon, Text = "جرعه — Ctrl+J برای نمایش یا مخفی‌کردن", Visible = true, ContextMenuStrip = menu };
         icon.DoubleClick += (_, _) => RestoreWindow();
         return icon;
     }
@@ -170,7 +175,19 @@ internal sealed class MainForm : Form
         if (dialog.ShowDialog(this) != DialogResult.OK) { args.Cancel = true; return; }
         args.ResultFilePath = dialog.FileName;
     }
-    private void RestoreWindow() { Show(); WindowState = FormWindowState.Normal; Activate(); }
+    private void RegisterToggleHotkey()
+    {
+        hotkeyRegistered = RegisterHotKey(Handle, ToggleHotkeyId, ModifierControl | ModifierNoRepeat, VirtualKeyJ);
+        if (hotkeyRegistered) return;
+        var error = new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+        AppPaths.Log(error);
+        tray.BalloonTipTitle = "میان‌بر جرعه فعال نشد";
+        tray.BalloonTipText = "Ctrl+J در دسترس نیست؛ احتمالاً برنامهٔ دیگری این کلید را گرفته است.";
+        tray.BalloonTipIcon = ToolTipIcon.Warning;
+        tray.ShowBalloonTip(5000);
+    }
+    private void ToggleWindow() { if (Visible && WindowState != FormWindowState.Minimized) Hide(); else RestoreWindow(); }
+    private void RestoreWindow() { Show(); WindowState = FormWindowState.Normal; Activate(); BringToFront(); SetForegroundWindow(Handle); }
     private async Task OpenPage(string page)
     {
         RestoreWindow();
@@ -189,16 +206,20 @@ internal sealed class MainForm : Form
     }
     protected override void Dispose(bool disposing)
     {
-        if (disposing) { placementTimer.Dispose(); tray.Visible=false; tray.ContextMenuStrip?.Dispose(); tray.Dispose(); browser.Dispose(); store.Dispose(); }
+        if (disposing) { if (hotkeyRegistered) { UnregisterHotKey(Handle, ToggleHotkeyId); hotkeyRegistered=false; } placementTimer.Dispose(); tray.Visible=false; tray.ContextMenuStrip?.Dispose(); tray.Dispose(); browser.Dispose(); store.Dispose(); }
         base.Dispose(disposing);
     }
     protected override void WndProc(ref Message message)
     {
         // Retain the native size loop without drawing a standard title bar or border.
         if (message.Msg == 0x83 && message.WParam != IntPtr.Zero) { message.Result = IntPtr.Zero; return; }
+        if (message.Msg == WmHotkey && message.WParam.ToInt32() == ToggleHotkeyId) { ToggleWindow(); return; }
         if(message.Msg==0x8042){exiting=true;Close();return;}
         base.WndProc(ref message);
     }
+    [DllImport("user32.dll", SetLastError=true)] private static extern bool RegisterHotKey(IntPtr window, int id, uint modifiers, uint virtualKey);
+    [DllImport("user32.dll", SetLastError=true)] private static extern bool UnregisterHotKey(IntPtr window, int id);
+    [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr window);
     [DllImport("user32.dll")] private static extern bool ReleaseCapture();
     [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr window, int message, IntPtr wparam, IntPtr lparam);
 }

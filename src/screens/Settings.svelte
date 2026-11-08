@@ -86,14 +86,14 @@
         <section id="setting-display">
           <h2>اندازهٔ نوشته</h2>
           <div class="radio-options">
-            {#each ['معمولی', 'بزرگ', 'خیلی بزرگ', 'کمی کوچک‌تر', 'کوچک‌تر'] as label, index}<button
+            {#each ['خیلی کوچک‌تر', 'کمی کوچک‌تر', 'معمولی', 'بزرگ', 'خیلی بزرگ'] as label, index}<button
                 class:yellow={preferences.textSize === index}
                 aria-pressed={preferences.textSize === index}
                 onclick={() => update({ textSize: index })}
                 ><i class:checked={preferences.textSize === index}></i>{label}</button
               >{/each}
           </div>
-          <p class="text-preview blue" style:font-size={`${[21, 23, 25, 19, 17][preferences.textSize]}px`}>
+          <p class="text-preview blue" style:font-size={`${[17, 19, 21, 23, 25][preferences.textSize]}px`}>
             این یک نمونه متن برای مشاهدهٔ اندازه<br />و خوانایی نوشته در جرعه است.
           </p>
         </section>

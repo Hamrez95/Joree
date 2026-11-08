@@ -962,6 +962,7 @@ progress::-moz-progress-bar {
   max-height: 237px;
   overflow-y: auto;
   scrollbar-width: thin;
+  padding-inline-end: 9px;
 }
 .example {
   border-radius: 28px;
@@ -3643,7 +3644,7 @@ html, body { overflow-x: hidden; }
 .workspace .flashcard-content h1.underlined:after { display: none; }
 .workspace .reading-card .flashcard-content { gap: 8px; padding-top: 8px; }
 .workspace .reading-card .flashcard-content h1 { font-size: clamp(21px, 5cqi, 28px); line-height: 1.4; }
-.workspace .reading-card .flashcard-body { max-height: none; font-size: clamp(17px, 3.8cqi, 21px); line-height: 1.72; }
+.workspace .reading-card .flashcard-body { max-height: none; font-size: clamp(15px, calc(var(--study-size) * 0.76), 24px); line-height: 1.72; }
 .workspace .study-progress { gap: 9px; margin-bottom: 10px; }
 .workspace .study-progress > span { font-size: 16px; }
 .workspace .study-tools { gap: 6px; }
@@ -3743,7 +3744,7 @@ html, body { overflow-x: hidden; }
   .bookmark-button { right: 6px; top: 8px; width: 34px; min-height: 34px; }
   .flashcard-content { min-width: 0; gap: 12px; padding: 8px 4px; }
   .flashcard-content h1 { max-width: 100%; font-size: 32px; line-height: 1.35; overflow-wrap: anywhere; }
-  .flashcard-body { width: 100%; max-width: 100%; font-size: clamp(17px, 3.8cqi, 22px); line-height: 1.7; overflow-wrap: anywhere; }
+  .flashcard-body { width: 100%; max-width: 100%; font-size: clamp(15px, calc(var(--study-size) * 0.76), 22px); line-height: 1.7; overflow-wrap: anywhere; }
   .example { min-width: 0; max-width: 100%; padding: 4px 10px; font-size: 16px; }
   .study-progress { gap: 7px; margin-bottom: 9px; }
   .study-progress > span { font-size: 15px; }
@@ -3755,7 +3756,7 @@ html, body { overflow-x: hidden; }
   .question-label { min-height: 29px; margin-top: 5px; padding: 2px 9px; font-size: 14px; }
   .question-card .flashcard-content { gap: 10px; padding: 8px 4px; }
   .question-card .flashcard-content h1 { font-size: 24px; }
-  .question-card .flashcard-body, .question-card:not(:has(.reveal-button)) .flashcard-body { font-size: clamp(20px, 4.2cqi, 25px); line-height: 1.5; }
+  .question-card .flashcard-body, .question-card:not(:has(.reveal-button)) .flashcard-body { font-size: clamp(15px, calc(var(--study-size) * 0.76), 22px); line-height: 1.5; }
   .reveal-button { width: min(100%, 330px); min-width: 0; min-height: 42px; margin: 0 auto 10px; padding: 4px 10px; font-size: 18px; }
   .rating-buttons { gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
   .rating-buttons button { flex: 1 1 30%; min-width: 0; min-height: 38px; padding: 3px 6px; font-size: 15px; }

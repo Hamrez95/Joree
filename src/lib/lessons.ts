@@ -30,6 +30,7 @@ export interface Review {
 }
 export interface Preferences {
   textSize: number;
+  textSizeVersion?: 1;
   motion: string;
   sound: boolean;
   pinned: boolean;
@@ -60,7 +61,8 @@ export function initialState(): SavedState {
     reviews: {},
     studyDays: [],
     preferences: {
-      textSize: 1,
+      textSize: 3,
+      textSizeVersion: 1,
       motion: 'full',
       sound: false,
       pinned: false,
@@ -96,6 +98,13 @@ export function migrateCurriculum(state: SavedState): SavedState {
       reviews: Object.fromEntries(
         Object.entries(state.reviews).filter(([id]) => !removedCards.has(id)),
       ),
+    };
+  }
+  if (migrated.preferences.textSizeVersion !== 1) {
+    const migratedSize = [2, 3, 4, 1, 0][migrated.preferences.textSize];
+    migrated = {
+      ...migrated,
+      preferences: { ...migrated.preferences, textSize: migratedSize, textSizeVersion: 1 },
     };
   }
   return normalizeCollections(migrated);
@@ -259,6 +268,7 @@ function validPreferences(p: Preferences): boolean {
   return (
     !!p &&
     [0, 1, 2, 3, 4].includes(p.textSize) &&
+    (p.textSizeVersion === undefined || p.textSizeVersion === 1) &&
     ['full', 'reduced', 'off'].includes(p.motion) &&
     ['blue', 'lavender'].includes(p.color) &&
     typeof p.sound === 'boolean' &&

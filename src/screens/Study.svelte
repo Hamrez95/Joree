@@ -33,7 +33,7 @@
   class="study-page page"
   class:question-card={!!card.question}
   class:reading-card={(card.question && revealed ? card.answer?.length ?? 0 : card.body.length) > 500}
-  style:--study-size={`${[25, 28, 32, 22, 19][textSize]}px`}
+  style:--study-size={`${[19, 22, 25, 28, 32][textSize]}px`}
   ontouchstart={(event) => (touchStart = event.touches[0].clientX)}
   ontouchend={(event) => {
     const distance = event.changedTouches[0].clientX - touchStart;
@@ -75,7 +75,7 @@
           >{fa(course.position + 1)} / {fa(course.cards.length)}</span
         >
         <div class="study-tools">
-          <button class="cream" aria-label="اندازهٔ نوشته" onclick={ontextsize}>Aa</button><button
+          <button class="cream" aria-label="کوچک‌تر کردن نوشته" title="کوچک‌تر کردن نوشته" onclick={ontextsize}>Aa</button><button
             class="cream"
             aria-label="یادداشت کارت"
             onclick={onnote}><Icon name="note" /></button
