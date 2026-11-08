@@ -1,0 +1,9 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Joree",
+  "version": "0.1.0",
+  "identifier": "app.joree.desktop",
+  "build": { "beforeDevCommand": "npm run dev", "beforeBuildCommand": "npm run build", "devUrl": "http://127.0.0.1:1420", "frontendDist": "../dist" },
+  "app": { "windows": [{ "label": "main", "title": "جرعه", "width": 860, "height": 880, "minWidth": 390, "minHeight": 440, "decorations": false, "transparent": true, "shadow": false, "backgroundColor": "#00000000" }], "security": { "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src ipc: http://ipc.localhost" } },
+  "bundle": { "active": true, "targets": ["nsis"], "icon": ["icons/icon.ico"] }
+}

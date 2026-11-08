@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>جرعه — مقایسه با مرجع</title>
+<style>body{margin:0;background:#d8e8fc;color:#111a45;font:16px/1.9 Tahoma,sans-serif;padding:24px}h1{font-size:25px;margin:0}p{margin:8px 0 25px}details{margin:15px 0;background:#fef6e9;border:1px solid #9daedb;border-radius:20px;padding:18px}summary{font-size:21px;font-weight:bold;cursor:pointer}.comparison{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;direction:ltr;align-items:start}figure{margin:15px 0 0;text-align:center;direction:rtl}img{display:block;width:100%;height:auto;margin-top:10px;border-radius:12px}figcaption{font-weight:bold}a{color:#253c8e}@media(max-width:750px){.comparison{grid-template-columns:1fr}body{padding:12px}}</style>
+<h1>جرعه — تصاویر مرجع و خروجی اجراشده</h1><p>سمت چپ شیت مرجع و سمت راست اسکرین‌شات فرانت است. این نمایش مقایسهٔ بصری است؛ درصد شباهت یا تطابق پیکسلی ادعا نمی‌کند. <a href="http://127.0.0.1:1420">بازکردن برنامه</a></p>
+<div id="gallery"></div>
+<script>
+const screens=[['کتابخانه','04_11_45','01-library'],['مطالعه و پاسخ','04_11_52','03-study'],['افزودن درس','04_11_59','05-import'],['مرور و یادداشت','04_12_04','04-note'],['مسیر یادگیری','04_21_37','10-progress'],['تنظیمات','04_21_57','13-settings'],['زنگ تفریح','04_22_06','17-game-0']];
+for(const [title,time,shot] of screens){const section=document.createElement('details');section.open=true;const summary=document.createElement('summary');summary.textContent=title;section.append(summary);const row=document.createElement('div');row.className='comparison';for(const [label,path] of [['تصویر مرجع',`../ChatGPT Image Nov 4, 2026, ${time} PM.png`],['خروجی فرانت',`screenshots/${shot}.png`]]){const figure=document.createElement('figure');const caption=document.createElement('figcaption');caption.textContent=label;const img=document.createElement('img');img.src=path;img.alt=label+' — '+title;figure.append(caption,img);row.append(figure);}section.append(row);document.getElementById('gallery').append(section);}
+</script>
+</html>

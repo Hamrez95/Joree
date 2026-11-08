@@ -1,0 +1,33 @@
+{
+  "name": "joree",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "preview": "vite preview --host 127.0.0.1",
+    "desktop": "tauri dev",
+    "desktop:build": "tauri build"
+  },
+  "dependencies": {
+    "@fontsource/vazirmatn": "^5.2.8",
+    "@tauri-apps/api": "^2.8.0",
+    "svelte": "5.39.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@sveltejs/vite-plugin-svelte": "6.2.0",
+    "@tauri-apps/cli": "^2.8.0",
+    "@tsconfig/svelte": "^5.0.5",
+    "prettier": "^3.6.2",
+    "svelte-check": "^4.3.0",
+    "typescript": "~5.9.2",
+    "vite": "7.1.7"
+  },
+  "overrides": {
+    "source-map-js": "1.2.1"
+  }
+}
