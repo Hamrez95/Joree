@@ -1,6 +1,7 @@
 <script lang="ts">
   import Icon from '../lib/Icon.svelte';
   import Decor from '../lib/Decor.svelte';
+  import LessonContent from '../lib/LessonContent.svelte';
   import { fa, type Card, type Course, type Review } from '../lib/lessons';
   export let course: Course;
   export let card: Card;
@@ -32,6 +33,7 @@
 <div
   class="study-page page"
   class:question-card={!!card.question}
+  class:reading-card={(card.question && revealed ? card.answer?.length ?? 0 : card.body.length) > 500}
   style:--study-size={`${[25, 28, 32][textSize]}px`}
   ontouchstart={(event) => (touchStart = event.touches[0].clientX)}
   ontouchend={(event) => {
@@ -58,12 +60,10 @@
     </div>{/if}
   {#key card.id}<div class="flashcard-content">
       <h1 class:underlined={!revealed}>{card.question && revealed ? '' : card.title}</h1>
-      <p class="flashcard-body" dir="auto">
-        {card.question ? (revealed ? card.answer : card.body) : card.body}
-      </p>
-      {#if !card.question && card.title === 'پرامپت چیست؟'}<div class="example blue">
-          <Icon name="file" />مثال: این متن را خلاصه کن
-        </div>{/if}
+      <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard users need to focus and scroll the reading region.) -->
+      <div class="flashcard-body" tabindex="0" role="region" aria-label="محتوای آموزشی">
+        <LessonContent text={card.question && revealed ? card.answer ?? '' : card.body} />
+      </div>
     </div>{/key}
   <div class="study-star"><Decor type="star" /></div>
   {#if card.question && !revealed}<button class="yellow reveal-button" onclick={onreveal}

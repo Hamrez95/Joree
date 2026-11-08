@@ -22,14 +22,14 @@ The app is **Persian-first and right-to-left**. These docs speak English; the co
 
 ## Download & get cozy
 
-**Current preview: v0.2.3 · Windows x64**
+**Current preview: v0.3.0 · Windows x64**
 
 | Pick your adventure              | Download                                                                                                      |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Install for your Windows account | [**JoreeSetup.exe**](https://github.com/Hamrez95/Joree/releases/download/v0.2.3/JoreeSetup.exe)               |
-| Extract and run                  | [Joree-0.2.3-win-x64.zip](https://github.com/Hamrez95/Joree/releases/download/v0.2.3/Joree-0.2.3-win-x64.zip) |
-| Write your first lesson          | [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.2.3/Joree-lesson-template.md)        |
-| Check the download hashes        | [SHA256SUMS.txt](https://github.com/Hamrez95/Joree/releases/download/v0.2.3/SHA256SUMS.txt)                   |
+| Install for your Windows account | [**JoreeSetup.exe**](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/JoreeSetup.exe)               |
+| Extract and run                  | [Joree-0.3.0-win-x64.zip](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/Joree-0.3.0-win-x64.zip) |
+| Write your first lesson          | [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/Joree-lesson-template.md)        |
+| Check the download hashes        | [SHA256SUMS.txt](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/SHA256SUMS.txt)                   |
 
 ### Before the first sip
 
@@ -38,13 +38,19 @@ You need **64-bit Windows**, the **[.NET 10 Desktop Runtime](https://dotnet.micr
 1. Download and run `JoreeSetup.exe`.
 2. Install for your own Windows account. The app installer uses **no administrator elevation**.
 3. Open **جرعه** on your desktop, or search **Joree** in Start.
-4. Try a clearly labeled sample lesson, then bring your own Markdown.
+4. Start the eight-lesson Persian workplace AI path, or bring your own Markdown.
 
 The app runs locally without Node, a development server, a separate browser, an account, or an AI service. The ZIP uses the same shared .NET and WebView2 prerequisites; it does **not** bundle those runtimes.
 
 **Work laptop?** Installing missing runtimes or running an unsigned preview may still need your organization's approval. You don't need to weaken Windows security settings.
 
 [Full Windows install guide →](docs/installation.md)
+
+## Your first learning path
+
+The shelf now starts with **8 Persian lessons and 83 substantial cards** about workplace AI: LLM basics, prompting, RAG, evaluation, internal infrastructure, agents, platform choices, and a final project. Includes **24 self-check questions**, official sources, four local diagrams, and a small dependency-free lab. Practice and independent project work are required; reading the cards alone does not guarantee midlevel proficiency.
+
+[Course index](public/lessons/company-ai/README.md) · [All lessons in one Markdown file](public/lessons/company-ai/company-ai-complete.md) · [Runnable practice lab](public/lessons/company-ai/lab)
 
 ## The real thing
 
@@ -114,7 +120,7 @@ PDF, Word, and PowerPoint aren't direct lesson inputs yet. Convert their content
 
 | Item                               | Location                                   |
 | ---------------------------------- | ------------------------------------------ |
-| Installed app                      | `%LOCALAPPDATA%\Programs\Joree\app-0.2.3\` |
+| Installed app                      | `%LOCALAPPDATA%\Programs\Joree\app-0.3.0\` |
 | Learning database                  | `%LOCALAPPDATA%\Joree\learning.sqlite3`    |
 | Window position                    | `%LOCALAPPDATA%\Joree\window.json`         |
 | Host error log, if an error occurs | `%LOCALAPPDATA%\Joree\errors.log`          |

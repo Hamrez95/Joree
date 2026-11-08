@@ -17,6 +17,7 @@
   import Note from './screens/Note.svelte';
   import {
     initialState,
+    migrateCurriculum,
     loadState,
     isSavedState,
     scheduleReview,
@@ -28,7 +29,7 @@
   import { isDesktop, windowAction } from './lib/desktop';
   let state: SavedState = initialState();
   let page = 'library';
-  let selectedId = 'ai';
+  let selectedId = 'company-ai-01';
   let revealed = false;
   let compact = false;
   let settingsTheme = false;
@@ -316,7 +317,7 @@
         label: 'بازیابی اطلاعات',
         destructive: true,
         action: () => {
-          state = pendingRestore!;
+          state = migrateCurriculum(pendingRestore!);
           pendingRestore = null;
           selectedId = state.courses[0]?.id ?? '';
           page = 'library';

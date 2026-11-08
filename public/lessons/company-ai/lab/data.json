@@ -1,0 +1,16 @@
+{
+  "documents": [
+    {"id":"leave-v2","title":"مرخصی سالانه","active":true,"roles":["employee","manager"],"text":"در شرکت فرضی، مرخصی سالانه ۲۰ روزه‌ست و استفاده از آن نیاز به تأیید مدیر داره. این عدد فقط برای آزمایشه."},
+    {"id":"leave-v1","title":"مرخصی سالانه قدیمی","active":false,"roles":["employee","manager"],"text":"در نسخهٔ منقضی آزمایشی، مرخصی سالانه ۱۵ روز بوده."},
+    {"id":"salary","title":"حقوق مدیر","active":true,"roles":["manager"],"text":"گزارش حقوق مدیر فقط یک سند ساختگی برای آزمون دسترسیه. مبلغ فرضی ۱۰۰ واحده."},
+    {"id":"support","title":"تیکت شبکه","active":true,"roles":["employee","manager"],"text":"برای مشکل شبکه یک تیکت با شرح خطا ثبت کنید. رمز ورود را داخل تیکت ننویسید."}
+  ],
+  "cases": [
+    {"question":"مرخصی سالانه","role":"employee","expected":"leave-v2"},
+    {"question":"مرخصی سالانه قدیمی","role":"employee","expected":"leave-v2"},
+    {"question":"حقوق مدیر","role":"employee","expected":null},
+    {"question":"حقوق مدیر","role":"manager","expected":"salary"},
+    {"question":"تیکت شبکه","role":"employee","expected":"support"},
+    {"question":"قیمت بستنی","role":"employee","expected":null}
+  ]
+}

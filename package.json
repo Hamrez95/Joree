@@ -1,13 +1,13 @@
 {
   "name": "joree",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "check": "svelte-check --tsconfig ./tsconfig.json",
-    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "check": "node scripts/build-curriculum.mjs --check && svelte-check --tsconfig ./tsconfig.json",
+    "test": "node --experimental-strip-types --test tests/*.test.ts && node public/lessons/company-ai/lab/lab.mjs --test",
     "preview": "vite preview --host 127.0.0.1",
     "desktop": "tauri dev",
     "desktop:build": "tauri build"

@@ -3474,3 +3474,32 @@ body:has(.workspace):has(.console.compact) {
 }
 .arcade-hardware{direction:ltr}.game-layout{justify-content:space-between;gap:18px}.game-sidebar{width:210px}.game-layout .game-board{width:450px;margin-left:0}.game-sidebar .score-panel{padding:4px 8px 7px;margin-bottom:10px}.game-sidebar .score-panel h2{font-size:22px;line-height:1.3;margin-bottom:4px}.game-sidebar .next-piece{height:80px}.game-sidebar .next-piece svg{height:76px}.game-sidebar h3{font-size:19px;margin:4px 0}.game-sidebar p{font-size:14px;line-height:1.6;margin:6px 0}.game-sidebar .arrow-keys kbd{font-size:23px}.game-sidebar>.blue{min-height:28px;font-size:14px}
 html.native,html.native body{height:100%;overflow:hidden}
+
+/* Long lessons keep the console design and scroll within the reading area. */
+.flashcard-content { min-height: 0; }
+.reading-card .flashcard-content { gap: 12px; justify-content: flex-start; padding-top: 16px; }
+.reading-card .flashcard-content h1 { font-size: 30px; line-height: 1.65; flex-shrink: 0; }
+.reading-card .flashcard-body { max-height: 310px; font-size: calc(var(--study-size) * 0.76); font-weight: 500; width: 100%; }
+.flashcard-body { white-space: normal; }
+.lesson-content { text-align: start; overflow-wrap: anywhere; }
+.lesson-content p { margin: 0 0 1em; white-space: pre-line; }
+.lesson-content p:last-child { margin-bottom: 0; }
+.lesson-content a { color: #354d87; text-decoration: underline; text-underline-offset: 3px; }
+.lesson-content a:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }
+.lesson-content h2 { font-size: 1.1em; margin: 0.8em 0 0.4em; }
+.lesson-content ul { padding-inline-start: 1.3em; margin: 0.5em 0; }
+.lesson-content li { margin-block: 0.4em; }
+.lesson-content pre { text-align: left; white-space: pre; overflow-x: auto; padding: 12px; background: #f5f5f5; border: 1px solid #aaa; font-size: 0.85em; }
+.lesson-content code { font-family: Consolas, monospace; }
+.lesson-content figure { margin: 0.8em 0; }
+.lesson-content img { display: block; width: 100%; height: auto; }
+.lesson-content figcaption { font-size: 0.8em; line-height: 1.7; margin-block: 0.5em; }
+.breadcrumb { overflow: hidden; text-overflow: ellipsis; font-size: 17px; }
+.compact .reading-card .flashcard-content h1 { font-size: 23px; }
+.compact .reading-card .flashcard-body { max-height: 140px; }
+.course-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.course-card { min-width: 0; }
+.course-card h2 { font-size: 19px; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.continue-info { min-width: 0; }
+.continue-info p { overflow: hidden; text-overflow: ellipsis; }
+.reading-card .study-star { z-index: -1; }

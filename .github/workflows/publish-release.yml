@@ -53,7 +53,7 @@ jobs:
           version=$(node -p "require('./package.json').version")
           tag="v$version"
           if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$EXPECTED_SHA" --title "Joree $tag - Your first little sip" --notes-file "docs/releases/$tag.md" --draft
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --target "$EXPECTED_SHA" --title "Joree $tag" --notes-file "docs/releases/$tag.md" --draft
           fi
           target=$(gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json targetCommitish --jq .targetCommitish)
           test "$target" = "$EXPECTED_SHA"

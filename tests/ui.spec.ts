@@ -12,15 +12,15 @@ test('library, search, chapters, study, notes and persistence', async ({ page })
   page.on('pageerror', (error) => errors.push(error.message));
   await ready(page);
   await screenshot(page, '01-library');
-  await page.getByRole('textbox', { name: 'جست‌وجوی درس' }).fill('انگلیسی');
+  await page.getByRole('textbox', { name: 'جست‌وجوی درس' }).fill('هوش مصنوعی داخلی');
   await expect(page.locator('.course-card')).toHaveCount(1);
   await page.getByRole('textbox', { name: 'جست‌وجوی درس' }).fill('بدون نتیجه');
   await expect(page.getByText('درسی پیدا نشد')).toBeVisible();
   await page.getByRole('textbox', { name: 'جست‌وجوی درس' }).fill('');
-  await page.locator('.course-card').filter({ hasText: 'مبانی هوش مصنوعی' }).click();
+  await page.locator('.course-card').filter({ hasText: 'از مسئلهٔ شرکت تا مدل زبانی' }).click();
   await screenshot(page, '02-course');
-  await page.getByRole('button', { name: 'مدل‌های زبانی' }).click();
-  await expect(page.getByRole('heading', { name: 'پرامپت چیست؟' })).toBeVisible();
+  await page.getByRole('button', { name: 'آموزش و مثال‌ها' }).click();
+  await expect(page.getByRole('heading', { name: 'مدل، برنامه و دستیار چه فرقی دارن؟' })).toBeVisible();
   await screenshot(page, '03-study');
   await page.getByRole('button', { name: 'نشان‌کردن کارت' }).click();
   await page.getByRole('button', { name: 'یادداشت کارت', exact: true }).click();
@@ -29,7 +29,7 @@ test('library, search, chapters, study, notes and persistence', async ({ page })
   await page.getByRole('button', { name: 'ذخیرهٔ یادداشت' }).click();
   await page.reload();
   await page.getByRole('button', { name: 'ادامهٔ یادگیری', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'پرامپت چیست؟' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'مدل، برنامه و دستیار چه فرقی دارن؟' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'نشان‌کردن کارت' })).toHaveAttribute(
     'aria-pressed',
     'true',
@@ -72,8 +72,8 @@ test('Markdown import preview, commit and malformed file state', async ({ page }
 });
 test('question reveal, rating, review and progress', async ({ page }) => {
   await ready(page);
-  await page.getByRole('button', { name: 'ادامهٔ یادگیری', exact: true }).click();
-  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'کارت بعدی' }).click();
+  await page.locator('.course-card').filter({ hasText: 'از مسئلهٔ شرکت تا مدل زبانی' }).click();
+  await page.getByRole('button', { name: 'خودآزمایی' }).click();
   await expect(page.getByRole('button', { name: 'نمایش پاسخ' })).toBeVisible();
   await screenshot(page, '08-question');
   await page.getByRole('button', { name: 'نمایش پاسخ' }).click();
@@ -165,4 +165,28 @@ test('scaled desktop sizes fit the console without horizontal overflow', async (
     expect(rect!.y).toBeGreaterThanOrEqual(0);
     expect(rect!.y + rect!.height).toBeLessThanOrEqual(height);
   }
+});
+
+test('long lessons show local diagrams, clickable sources, and downloadable practice files', async ({ page }) => {
+  await ready(page);
+  await expect(page.locator('.course-card')).toHaveCount(8);
+  await page.locator('.course-card').filter({ hasText: 'ساخت RAG' }).click();
+  await page.getByRole('button', { name: 'آموزش و مثال‌ها' }).click();
+  const reading = page.getByRole('region', { name: 'محتوای آموزشی' });
+  const diagram = reading.locator('img');
+  await expect.poll(() => diagram.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await diagram.scrollIntoViewIfNeeded();
+  await expect(diagram).toBeVisible();
+  await expect(reading.getByRole('link')).toHaveAttribute('target', '_blank');
+  await screenshot(page, '20-rag-diagram');
+  await reading.focus();
+  const before = await reading.evaluate(element => element.scrollTop);
+  await page.keyboard.press('Home');
+  await expect.poll(() => reading.evaluate(element => element.scrollTop)).toBeLessThan(before);
+  await page.getByRole('button', { name: 'کتابخانه', exact: true }).click();
+  await page.locator('.course-card').filter({ hasText: 'پروژهٔ پایانی' }).click();
+  await page.getByRole('button', { name: 'آموزش و مثال‌ها' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'آزمایش اجرایی' }).click();
+  expect((await downloadPromise).suggestedFilename()).toBe('lab.mjs');
 });

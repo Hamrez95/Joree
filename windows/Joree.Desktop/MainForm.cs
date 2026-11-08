@@ -66,7 +66,7 @@ internal sealed class MainForm : Form
             await browser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("window.__JOREE_DESKTOP__=true;");
             browser.CoreWebView2.WebMessageReceived += ReceiveMessage;
             browser.CoreWebView2.NavigationStarting += (_, args) => { if (!IsLocal(args.Uri)) args.Cancel = true; };
-            browser.CoreWebView2.NewWindowRequested += (_, args) => args.Handled = true;
+            browser.CoreWebView2.NewWindowRequested += (_, args) => { args.Handled = true; OpenReference(args.Uri); };
             browser.CoreWebView2.DownloadStarting += Download;
             browser.CoreWebView2.PermissionRequested += (_, args) => args.State = CoreWebView2PermissionState.Deny;
             browser.CoreWebView2.ProcessFailed += (_, args) => ReportFatal(new IOException("موتور نمایش متوقف شد: " + args.ProcessFailedKind));
@@ -76,6 +76,12 @@ internal sealed class MainForm : Form
         catch (Exception error) { ReportFatal(error); }
     }
     private static bool IsLocal(string source) => Uri.TryCreate(source, UriKind.Absolute, out var uri) && uri.Scheme == "https" && uri.Host == "joree.local" && uri.Port == 443;
+    private static void OpenReference(string source)
+    {
+        if (!Uri.TryCreate(source, UriKind.Absolute, out var uri) || (uri.Scheme != "https" && uri.Scheme != "http") || IsLocal(source)) return;
+        try { System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true }); }
+        catch (Exception error) { AppPaths.Log(error); MessageBox.Show("بازکردن لینک منبع انجام نشد. مرورگر پیش‌فرض را بررسی کنید.", "جرعه"); }
+    }
     private void ReceiveMessage(object? sender, CoreWebView2WebMessageReceivedEventArgs args)
     {
         if (!IsLocal(args.Source) || args.WebMessageAsJson.Length > 21_000_000) return;
@@ -140,7 +146,10 @@ internal sealed class MainForm : Form
         var source = args.DownloadOperation.Uri;
         if (!(IsLocal(source) || source.StartsWith("blob:"+Origin+"/", StringComparison.Ordinal))) { args.Cancel = true; return; }
         using var deferral = args.GetDeferral();
-        using var dialog = new SaveFileDialog { Title = "ذخیرهٔ نسخهٔ پشتیبان جرعه", FileName = Path.GetFileName(args.ResultFilePath), Filter = "Joree backup (*.json)|*.json", DefaultExt = "json", AddExtension = true };
+        var filename = Path.GetFileName(args.ResultFilePath);
+        var extension = Path.GetExtension(filename).ToLowerInvariant();
+        if (extension is not (".json" or ".mjs" or ".md")) { args.Cancel = true; return; }
+        using var dialog = new SaveFileDialog { Title = "ذخیرهٔ فایل جرعه", FileName = filename, Filter = $"Joree file (*{extension})|*{extension}", DefaultExt = extension.TrimStart('.'), AddExtension = true };
         args.Handled = true;
         if (dialog.ShowDialog(this) != DialogResult.OK) { args.Cancel = true; return; }
         args.ResultFilePath = dialog.FileName;

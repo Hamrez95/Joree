@@ -1,3 +1,5 @@
+import { curriculum } from './curriculum.ts';
+
 export interface Card {
   id: string;
   title: string;
@@ -31,6 +33,7 @@ export interface Preferences {
 }
 export interface SavedState {
   version: 1;
+  curriculumVersion?: number;
   courses: Course[];
   bookmarks: string[];
   notes: Record<string, { text: string; source: string }>;
@@ -38,89 +41,11 @@ export interface SavedState {
   studyDays: string[];
   preferences: Preferences;
 }
-const aiCards: Omit<Card, 'id'>[] = [
-  {
-    title: 'هوش مصنوعی چیست؟',
-    body: 'هوش مصنوعی به ماشین‌ها کمک می‌کند کارهایی مانند یادگیری، حل مسئله و درک زبان را انجام دهند.',
-    chapter: 'مفاهیم پایه',
-  },
-  {
-    title: 'مدل چگونه یاد می‌گیرد؟',
-    body: 'مدل با دیدن نمونه‌ها، الگوها را پیدا می‌کند. کیفیت و تنوع داده‌ها بر نتیجهٔ یادگیری اثر دارد.',
-    chapter: 'یادگیری ماشین',
-  },
-  {
-    title: 'پرامپت چیست؟',
-    body: 'دستور یا پرسشی که به مدل می‌دهی،\nتا پاسخ موردنظرت را تولید کند.',
-    chapter: 'مدل‌های زبانی',
-  },
-  { title: 'یک مثال ساده', body: 'مثال: این متن را خلاصه کن', chapter: 'مدل‌های زبانی' },
-  {
-    title: 'پرامپت خوب چه ویژگی‌هایی دارد؟',
-    body: 'اول فکر کن، بعد پاسخ را ببین',
-    question: 'پرامپت خوب چه ویژگی‌هایی دارد؟',
-    answer: 'هدف روشن، زمینهٔ کافی و\nشکل خروجی مشخص.',
-    chapter: 'مدل‌های زبانی',
-  },
-  {
-    title: 'پاسخ مدل را بررسی کن',
-    body: 'مدل ممکن است اشتباه کند. اطلاعات مهم را با منبع معتبر مقایسه کن.',
-    chapter: 'مدل‌های زبانی',
-  },
-];
-function course(id: string, title: string, kind: string, cards: Omit<Card, 'id'>[]): Course {
-  return {
-    id,
-    title,
-    kind,
-    description: 'درس نمونه',
-    cards: cards.map((card, index) => ({ ...card, id: `${id}-${index}` })),
-    position: 0,
-    seen: [],
-  };
-}
 export function initialState(): SavedState {
   return {
     version: 1,
-    courses: [
-      course('ai', 'مبانی هوش مصنوعی', 'ai', aiCards),
-      course('english', 'انگلیسی روزمره', 'english', [
-        {
-          title: 'معرفی خود',
-          body: 'Hello! My name is Sara.\nسلام! نام من سارا است.',
-          chapter: 'مکالمهٔ روزمره',
-        },
-        {
-          title: 'زمان حال ساده',
-          body: 'I study every day.\nمن هر روز مطالعه می‌کنم.',
-          chapter: 'مکالمهٔ روزمره',
-        },
-      ]),
-      course('excel', 'اکسل کاربردی', 'excel', [
-        {
-          title: 'جمع در اکسل',
-          body: 'تابع SUM مجموع اعداد یک محدوده را محاسبه می‌کند.\n=SUM(A1:A10)',
-          chapter: 'فرمول‌های پایه',
-        },
-        {
-          title: 'تابع VLOOKUP در اکسل چه کاربردی دارد؟',
-          body: 'این تابع یک مقدار را در ستون اول جدول پیدا می‌کند و مقدار ستون انتخاب‌شده را از همان ردیف برمی‌گرداند.',
-          chapter: 'فرمول‌های پایه',
-        },
-      ]),
-      course('thinking', 'تفکر نقادانه', 'brain', [
-        {
-          title: 'پرسش از شواهد',
-          body: 'پیش از پذیرفتن یک ادعا بپرس: چه شواهدی از آن پشتیبانی می‌کند؟',
-          chapter: 'مفاهیم پایه',
-        },
-        {
-          title: 'تفاوت نظر و واقعیت',
-          body: 'واقعیت را می‌توان بررسی کرد؛ نظر، برداشت یا قضاوت فرد است.',
-          chapter: 'مفاهیم پایه',
-        },
-      ]),
-    ],
+    curriculumVersion: 1,
+    courses: structuredClone(curriculum),
     bookmarks: [],
     notes: {},
     reviews: {},
@@ -134,6 +59,33 @@ export function initialState(): SavedState {
       reminderTime: '20:00',
       color: 'blue',
     },
+  };
+}
+
+/** Replaces only the four original demo IDs once; imported lessons and preferences survive. */
+export function migrateCurriculum(state: SavedState): SavedState {
+  if (state.curriculumVersion === 1) return state;
+  const demoIds = new Set(['ai', 'english', 'excel', 'thinking']);
+  const removedCards = new Set(
+    state.courses
+      .filter((item) => demoIds.has(item.id))
+      .flatMap((item) => item.cards.map((card) => card.id)),
+  );
+  const retained = state.courses.filter((item) => !demoIds.has(item.id));
+  const retainedIds = new Set(retained.map((item) => item.id));
+  return {
+    ...state,
+    curriculumVersion: 1,
+    studyDays: retained.length ? state.studyDays : [],
+    courses: [
+      ...structuredClone(curriculum).filter((item) => !retainedIds.has(item.id)),
+      ...retained,
+    ],
+    bookmarks: state.bookmarks.filter((id) => !removedCards.has(id)),
+    notes: Object.fromEntries(Object.entries(state.notes).filter(([id]) => !removedCards.has(id))),
+    reviews: Object.fromEntries(
+      Object.entries(state.reviews).filter(([id]) => !removedCards.has(id)),
+    ),
   };
 }
 export function normalizeSearch(text: string): string {
@@ -259,7 +211,7 @@ export function loadState(): SavedState {
   const parsed: unknown = JSON.parse(raw);
   if (!isSavedState(parsed))
     throw new Error('اطلاعات ذخیره‌شده سازگار نیست. از بخش تنظیمات نسخهٔ پشتیبان را بازیابی کن.');
-  return parsed;
+  return migrateCurriculum(parsed);
 }
 export function scheduleReview(rating: Review['rating'], now: Date): Review {
   const minutes = { again: 10, hard: 1440, good: 4320 }[rating];

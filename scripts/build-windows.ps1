@@ -1,3 +1,4 @@
+#requires -Version 7.0
 param([switch]$SkipFrontend)
 $ErrorActionPreference='Stop'
 $projectRoot=Split-Path $PSScriptRoot -Parent
