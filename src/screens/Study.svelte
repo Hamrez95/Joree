@@ -33,7 +33,7 @@
   class="study-page page"
   class:question-card={!!card.question}
   class:reading-card={(card.question && revealed ? card.answer?.length ?? 0 : card.body.length) > 500}
-  style:--study-size={`${[25, 28, 32][textSize]}px`}
+  style:--study-size={`${[25, 28, 32, 22, 19][textSize]}px`}
   ontouchstart={(event) => (touchStart = event.touches[0].clientX)}
   ontouchend={(event) => {
     const distance = event.changedTouches[0].clientX - touchStart;

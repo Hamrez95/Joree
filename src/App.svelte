@@ -477,7 +477,7 @@
         ontextsize={() =>
           (state = {
             ...state,
-            preferences: { ...state.preferences, textSize: (state.preferences.textSize + 1) % 3 },
+            preferences: { ...state.preferences, textSize: (state.preferences.textSize + 1) % 5 },
           })}
         onback={() => (page = 'detail')}
         onrate={rate}

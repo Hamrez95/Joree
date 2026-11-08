@@ -258,7 +258,7 @@ function validReviews(reviews: SavedState['reviews']): boolean {
 function validPreferences(p: Preferences): boolean {
   return (
     !!p &&
-    [0, 1, 2].includes(p.textSize) &&
+    [0, 1, 2, 3, 4].includes(p.textSize) &&
     ['full', 'reduced', 'off'].includes(p.motion) &&
     ['blue', 'lavender'].includes(p.color) &&
     typeof p.sound === 'boolean' &&

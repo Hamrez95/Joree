@@ -36,7 +36,6 @@
   class="console-stage"
   class:hidden={minimized}
   class:compact
-  class:tall-settings={page === 'settings' && !settingsTheme}
   class:themes-screen={page === 'settings' && settingsTheme}
   class:arcade-shell={page === 'arcade'}
   class:tall-import={page === 'import'}
@@ -61,6 +60,12 @@
         {#each Array(14) as _}<i></i>{/each}
       </div>
       <div class="window-controls">
+        <button
+          class="compact-control window-size-control"
+          aria-label={compact ? 'حالت بزرگ' : 'حالت کوچک مطالعه'}
+          title={compact ? 'حالت بزرگ' : 'حالت کوچک مطالعه'}
+          onclick={oncompact}><Icon name="expand" size={17} /></button
+        >
         <button aria-label="همیشه روی پنجره‌ها" class:active={pinned} onclick={onpin}
           ><Icon name="pin" size={21} /></button
         ><button aria-label="کوچک‌کردن پنجره" onclick={() => nativeAction('minimize')}
@@ -84,11 +89,5 @@
       {#if page === 'arcade'}<button class="active" onclick={() => onnav('arcade')}><Icon name="game" size={33}/><span>زنگ تفریح</span></button>{/if}
     </nav>
     {#if page === 'arcade'}<div class="arcade-hardware"><button class="cream hardware-game" aria-label="کتابخانهٔ درس‌ها" onclick={()=>onnav('library')}><Icon name="book" size={34}/></button><button class="coral" aria-label="بازگشت به کتابخانه" onclick={()=>onnav('library')}><Icon name="arrow" size={37}/></button><div class="speaker" aria-hidden="true">{#each Array(30) as _}<i></i>{/each}</div><button class="yellow" aria-label="ادامهٔ مطالعه" onclick={()=>onnav('study')}><Icon name="next" size={39}/></button><button class="cream hardware-grid" aria-label="تنظیمات بازی و کنسول" onclick={()=>onnav('settings')}><Icon name="grid" size={27}/></button></div>{/if}
-    <button
-      class="compact-control"
-      aria-label={compact ? 'حالت بزرگ' : 'حالت کوچک مطالعه'}
-      title={compact ? 'حالت بزرگ' : 'حالت کوچک مطالعه'}
-      onclick={oncompact}><Icon name="expand" size={16} /></button
-    >
   </main>
 </div>

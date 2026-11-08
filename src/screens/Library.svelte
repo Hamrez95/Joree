@@ -14,6 +14,7 @@
   export let ondeletecollection: (id: string) => void;
   let search = '';
   let filter = 'all';
+  let collectionOpen = false;
   let selectedCollectionId: string | null = null;
   let uncategorizedSelected = false;
   let creatingCollection = false;
@@ -59,6 +60,7 @@
   function selectCollection(id: string | null, uncategorized = false) {
     selectedCollectionId = id;
     uncategorizedSelected = uncategorized;
+    collectionOpen = false;
     filter = 'all';
   }
   $: scopedCourses = courses.filter(matchesCollection);
@@ -78,6 +80,7 @@
           : course.seen.length === course.cards.length)),
   );
   function beginCreate(parentId: string | null = selectedCollectionId) {
+    collectionOpen = true;
     collectionName = '';
     collectionError = '';
     parentSelection = parentId ?? '';
@@ -127,12 +130,14 @@
   </div>
   <section class="collection-panel" aria-label="کالکشن‌های درس‌ها">
     <div class="collection-panel-heading">
-      <strong><Icon name="folder" size={19} />کالکشن‌ها</strong>
+      <button class="collection-toggle" aria-expanded={collectionOpen} aria-controls="collection-tree" onclick={() => (collectionOpen = !collectionOpen)}
+        ><Icon name="folder" size={19} /><span>کالکشن‌ها</span><span class="collection-chevron" class:expanded={collectionOpen}><Icon name="next" size={15} /></span></button
+      >
       {#if !creatingCollection}<button class="collection-create" onclick={() => beginCreate()}
           ><Icon name="plus" size={17} />کالکشن جدید</button
         >{/if}
     </div>
-    <div class="collection-tree" role="tree" aria-label="درخت کالکشن‌ها">
+    {#if collectionOpen}<div id="collection-tree" class="collection-tree" role="tree" aria-label="درخت کالکشن‌ها">
       <button
         class="collection-node"
         class:selected={!selectedCollectionId && !uncategorizedSelected}
@@ -187,7 +192,7 @@
         </label>
         {#if collectionError}<p class="collection-error" role="alert">{collectionError}</p>{/if}
         <div><button class="yellow" type="submit">{editingCollection ? 'ذخیرهٔ نام' : 'ساخت کالکشن'}</button><button class="cream" type="button" onclick={() => {creatingCollection=false;editingCollection=false;collectionError='';}}>انصراف</button></div>
-      </form>{/if}
+      </form>{/if}{/if}
   </section>
   <div class="library-filters" aria-label="فیلتر درس‌ها">
     {#each [{ id: 'all', label: 'همه' }, { id: 'learning', label: 'در حال یادگیری' }, { id: 'done', label: 'تمام‌شده' }] as item}<button
