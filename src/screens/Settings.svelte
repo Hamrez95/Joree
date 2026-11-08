@@ -8,6 +8,7 @@
   export let onrestore: () => void;
   export let onpin: () => void;
   export let ontheme: (open: boolean) => void;
+  export let onback: () => void;
   let tab = 'display';
   let themePage = false;
   function update(values: Partial<Preferences>) {
@@ -177,4 +178,7 @@
         >
       </div>
     </div>{/if}
+  <footer class="settings-footer">
+    <button class="cream" onclick={onback}><Icon name="arrow" size={19} />بازگشت به کتابخانه</button>
+  </footer>
 </div>

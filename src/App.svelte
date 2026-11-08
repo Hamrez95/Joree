@@ -23,6 +23,7 @@
     scheduleReview,
     type SavedState,
     type Course,
+    type Collection,
     type Card,
     type Review,
   } from './lib/lessons';
@@ -33,6 +34,7 @@
   let revealed = false;
   let compact = false;
   let settingsTheme = false;
+  let newLessonCollectionId: string | null = null;
   let scale = 1;
   let layoutWidth = 824;
   let layoutHeight = 824;
@@ -268,6 +270,71 @@
     page = 'library';
     notify('درس به کتابخانه اضافه شد');
   }
+  function createCollection(name: string, parentId: string | null): boolean {
+    const duplicate = state.collections.some(
+      (item) => item.parentId === parentId && item.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase(),
+    );
+    if (duplicate) {
+      notify('در این شاخه کالکشنی با این نام هست.', true);
+      return false;
+    }
+    if (parentId && !state.collections.some((item) => item.id === parentId)) return false;
+    const collection: Collection = { id: crypto.randomUUID(), name: name.trim(), parentId };
+    state = { ...state, collections: [...state.collections, collection] };
+    notify('کالکشن ساخته شد');
+    return true;
+  }
+  function renameCollection(id: string, name: string, parentId: string | null): boolean {
+    const target = state.collections.find((item) => item.id === id);
+    if (!target) return false;
+    const duplicate = state.collections.some(
+      (item) => item.id !== id && item.parentId === parentId && item.name.trim().toLocaleLowerCase() === name.trim().toLocaleLowerCase(),
+    );
+    if (duplicate) {
+      notify('در این شاخه کالکشنی با این نام هست.', true);
+      return false;
+    }
+    let candidateParent = parentId;
+    while (candidateParent) {
+      if (candidateParent === id) {
+        notify('یک کالکشن نمی‌تواند زیرمجموعهٔ خودش باشد.', true);
+        return false;
+      }
+      candidateParent = state.collections.find((item) => item.id === candidateParent)?.parentId ?? null;
+    }
+    state = {
+      ...state,
+      collections: state.collections.map((item) => item.id === id ? { ...item, name: name.trim(), parentId } : item),
+    };
+    notify('نام کالکشن تغییر کرد');
+    return true;
+  }
+  function deleteCollection(id: string) {
+    const collection = state.collections.find((item) => item.id === id);
+    if (!collection) return;
+    const destination = collection.parentId
+      ? state.collections.find((item) => item.id === collection.parentId)?.name
+      : 'بدون کالکشن';
+    dialog = {
+      title: 'حذف کالکشن',
+      message: `درس‌های این کالکشن به «${destination ?? 'بدون کالکشن'}» منتقل می‌شوند و زیرکالکشن‌ها یک سطح بالاتر می‌آیند. درس‌ها و پیشرفتشون حذف نمی‌شوند.`,
+      label: 'حذف کالکشن',
+      destructive: true,
+      action: () => {
+        state = {
+          ...state,
+          collections: state.collections.filter((item) => item.id !== id).map((item) =>
+            item.parentId === id ? { ...item, parentId: collection.parentId } : item,
+          ),
+          courses: state.courses.map((course) =>
+            course.collectionId === id ? { ...course, collectionId: collection.parentId } : course,
+          ),
+        };
+        if (newLessonCollectionId === id) newLessonCollectionId = collection.parentId;
+        notify('کالکشن حذف شد؛ درس‌ها نگه داشته شدند');
+      },
+    };
+  }
   function archive() {
     const archived = !selected.archived;
     updateCourse({ ...selected, archived });
@@ -375,15 +442,21 @@
   >
     {#if page === 'library'}<Library
         courses={state.courses}
+        collections={state.collections}
         onopen={(course) => {
           selectedId = course.id;
           page = 'detail';
         }}
         onstudy={(course) => study(course)}
-        onadd={() => (page = 'import')}
+        onadd={(collectionId) => {newLessonCollectionId=collectionId;page='import';}}
+        oncreatecollection={createCollection}
+        onrenamecollection={renameCollection}
+        ondeletecollection={deleteCollection}
       />
     {:else if page === 'detail' && selected}<CourseDetail
         course={selected}
+        collections={state.collections}
+        oncollectionchange={(collectionId) => updateCourse({ ...selected, collectionId })}
         onstudy={(position) => study(selected, position)}
         onback={() => (page = 'library')}
         onarchive={archive}
@@ -410,6 +483,8 @@
         onrate={rate}
       />
     {:else if page === 'import'}<ImportLesson
+        collections={state.collections}
+        initialCollectionId={newLessonCollectionId}
         onimport={importCourse}
         onerror={(message) => notify(message, true)}
       />
@@ -421,6 +496,7 @@
     {:else if page === 'progress'}<ProgressPage {state} />
     {:else if page === 'settings'}<Settings
         ontheme={open=>settingsTheme=open}
+        onback={() => {settingsTheme=false;page='library';}}
         preferences={state.preferences}
         onchange={(preferences) => (state = { ...state, preferences })}
         onbackup={backup}

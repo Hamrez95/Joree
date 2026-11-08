@@ -17,6 +17,12 @@ export interface Course {
   position: number;
   seen: string[];
   archived?: boolean;
+  collectionId?: string | null;
+}
+export interface Collection {
+  id: string;
+  name: string;
+  parentId: string | null;
 }
 export interface Review {
   due: string;
@@ -35,6 +41,7 @@ export interface SavedState {
   version: 1;
   curriculumVersion?: number;
   courses: Course[];
+  collections: Collection[];
   bookmarks: string[];
   notes: Record<string, { text: string; source: string }>;
   reviews: Record<string, Review>;
@@ -42,10 +49,12 @@ export interface SavedState {
   preferences: Preferences;
 }
 export function initialState(): SavedState {
+  const collectionId = 'collection-ai';
   return {
     version: 1,
     curriculumVersion: 1,
-    courses: structuredClone(curriculum),
+    courses: structuredClone(curriculum).map((course) => ({ ...course, collectionId })),
+    collections: [{ id: collectionId, name: 'هوش مصنوعی (AI)', parentId: null }],
     bookmarks: [],
     notes: {},
     reviews: {},
@@ -64,29 +73,56 @@ export function initialState(): SavedState {
 
 /** Replaces only the four original demo IDs once; imported lessons and preferences survive. */
 export function migrateCurriculum(state: SavedState): SavedState {
-  if (state.curriculumVersion === 1) return state;
-  const demoIds = new Set(['ai', 'english', 'excel', 'thinking']);
-  const removedCards = new Set(
-    state.courses
-      .filter((item) => demoIds.has(item.id))
-      .flatMap((item) => item.cards.map((card) => card.id)),
-  );
-  const retained = state.courses.filter((item) => !demoIds.has(item.id));
-  const retainedIds = new Set(retained.map((item) => item.id));
-  return {
-    ...state,
-    curriculumVersion: 1,
-    studyDays: retained.length ? state.studyDays : [],
-    courses: [
-      ...structuredClone(curriculum).filter((item) => !retainedIds.has(item.id)),
-      ...retained,
-    ],
-    bookmarks: state.bookmarks.filter((id) => !removedCards.has(id)),
-    notes: Object.fromEntries(Object.entries(state.notes).filter(([id]) => !removedCards.has(id))),
-    reviews: Object.fromEntries(
-      Object.entries(state.reviews).filter(([id]) => !removedCards.has(id)),
-    ),
-  };
+  let migrated = state;
+  if (state.curriculumVersion !== 1) {
+    const demoIds = new Set(['ai', 'english', 'excel', 'thinking']);
+    const removedCards = new Set(
+      state.courses
+        .filter((item) => demoIds.has(item.id))
+        .flatMap((item) => item.cards.map((card) => card.id)),
+    );
+    const retained = state.courses.filter((item) => !demoIds.has(item.id));
+    const retainedIds = new Set(retained.map((item) => item.id));
+    migrated = {
+      ...state,
+      curriculumVersion: 1,
+      studyDays: retained.length ? state.studyDays : [],
+      courses: [
+        ...structuredClone(curriculum).filter((item) => !retainedIds.has(item.id)),
+        ...retained,
+      ],
+      bookmarks: state.bookmarks.filter((id) => !removedCards.has(id)),
+      notes: Object.fromEntries(Object.entries(state.notes).filter(([id]) => !removedCards.has(id))),
+      reviews: Object.fromEntries(
+        Object.entries(state.reviews).filter(([id]) => !removedCards.has(id)),
+      ),
+    };
+  }
+  return normalizeCollections(migrated);
+}
+function normalizeCollections(state: SavedState): SavedState {
+  const hadCollections = Array.isArray(state.collections);
+  const collections = hadCollections ? [...state.collections] : [];
+  const needsAiCollection = !hadCollections && state.courses.some((course) => course.id.startsWith('company-ai-'));
+  if (needsAiCollection && !collections.some((collection) => collection.id === 'collection-ai'))
+    collections.push({ id: 'collection-ai', name: 'هوش مصنوعی (AI)', parentId: null });
+  const ids = new Set(collections.map((collection) => collection.id));
+  const valid = collections.map((collection) => ({
+    ...collection,
+    parentId: collection.parentId && ids.has(collection.parentId) && collection.parentId !== collection.id
+      ? collection.parentId
+      : null,
+  }));
+  const nextCourses = state.courses.map((course) => {
+    const collectionId = course.collectionId === undefined
+      ? !hadCollections && course.id.startsWith('company-ai-') ? 'collection-ai' : null
+      : course.collectionId && ids.has(course.collectionId) ? course.collectionId : null;
+    return course.collectionId === collectionId ? course : { ...course, collectionId };
+  });
+  const unchanged = hadCollections && valid.every((collection, index) =>
+    collection.parentId === state.collections[index]?.parentId,
+  ) && nextCourses.every((course, index) => course === state.courses[index]);
+  return unchanged ? state : { ...state, collections: valid, courses: nextCourses };
 }
 export function normalizeSearch(text: string): string {
   return text
@@ -96,7 +132,7 @@ export function normalizeSearch(text: string): string {
     .trim()
     .toLowerCase();
 }
-export function parseLesson(markdown: string, title: string): Course {
+export function parseLesson(markdown: string, title: string, collectionId: string | null = null): Course {
   if (markdown.length > 2_000_000)
     throw new Error('فایل خیلی بزرگ است؛ فایل کوچک‌تر از ۲ مگابایت انتخاب کن.');
   const blocks = markdown
@@ -114,6 +150,7 @@ export function parseLesson(markdown: string, title: string): Course {
     cards,
     position: 0,
     seen: [],
+    collectionId,
   };
 }
 function parseCard(block: string, index: number, courseId: string): Card {
@@ -143,6 +180,7 @@ export function isSavedState(value: unknown): value is SavedState {
     state.version === 1 &&
     Array.isArray(state.courses) &&
     state.courses.every(validCourse) &&
+    (state.collections === undefined || validCollections(state.collections)) &&
     Array.isArray(state.bookmarks) &&
     state.bookmarks.every((id) => typeof id === 'string') &&
     validNotes(state.notes) &&
@@ -152,12 +190,36 @@ export function isSavedState(value: unknown): value is SavedState {
     validPreferences(state.preferences)
   );
 }
+function validCollections(value: unknown): value is Collection[] {
+  if (!Array.isArray(value)) return false;
+  const collections = value as Collection[];
+  if (!collections.every((item) =>
+    !!item && typeof item.id === 'string' && item.id.length > 0 &&
+    typeof item.name === 'string' && !!item.name.trim() &&
+    (item.parentId === null || typeof item.parentId === 'string'),
+  )) return false;
+  const byId = new Map(collections.map((item) => [item.id, item]));
+  if (byId.size !== collections.length) return false;
+  return collections.every((item) => {
+    const seen = new Set([item.id]);
+    let parentId = item.parentId;
+    while (parentId !== null) {
+      if (seen.has(parentId)) return false;
+      seen.add(parentId);
+      const parent = byId.get(parentId);
+      if (!parent) return false;
+      parentId = parent.parentId;
+    }
+    return true;
+  });
+}
 function validCourse(course: Course): boolean {
   return (
     !!course &&
     typeof course.id === 'string' &&
     typeof course.title === 'string' &&
     typeof course.kind === 'string' &&
+    (course.collectionId === undefined || course.collectionId === null || typeof course.collectionId === 'string') &&
     Array.isArray(course.cards) &&
     course.cards.length > 0 &&
     course.cards.every(

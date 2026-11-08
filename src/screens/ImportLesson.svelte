@@ -2,9 +2,22 @@
   import Icon from '../lib/Icon.svelte';
   import Heading from '../lib/Heading.svelte';
   import Decor from '../lib/Decor.svelte';
-  import { parseLesson, fa, type Course } from '../lib/lessons';
+  import { parseLesson, fa, type Collection, type Course } from '../lib/lessons';
   export let onimport: (course: Course) => void;
   export let onerror: (message: string) => void;
+  export let collections: Collection[] = [];
+  export let initialCollectionId: string | null = null;
+  let collectionSelection = '';
+  $: collectionSelection = initialCollectionId ?? '';
+  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()) {
+    return collections
+      .filter((item) => item.parentId === parentId && !path.has(item.id))
+      .flatMap((item) => {
+        const nextPath = new Set(path).add(item.id);
+        return [{ collection: item, depth }, ...flatten(item.id, depth + 1, nextPath)];
+      });
+  }
+  $: collectionTree = flatten();
   let mode = 'file';
   let markdown = '';
   let name = '';
@@ -67,6 +80,14 @@
       ><b>۳</b>افزودن</span
     >
   </div>
+  <label class="import-collection">کالکشن درس
+    <select aria-label="کالکشن درس" bind:value={collectionSelection}>
+      <option value="">بدون کالکشن</option>
+      {#each collectionTree as node}<option value={node.collection.id}
+          >{'　'.repeat(node.depth)}{node.collection.name}</option
+        >{/each}
+    </select>
+  </label>
   <input
     class="visually-hidden"
     type="file"
@@ -99,7 +120,7 @@
     <div class="import-footer">
       <button
         class="yellow"
-        onclick={() => onimport({ ...preview!, title: name.trim() || preview!.title })}
+        onclick={() => onimport({ ...preview!, title: name.trim() || preview!.title, collectionId: collectionSelection || null })}
         ><Icon name="plus" />افزودن به کتابخانه</button
       ><button
         class="cream"

@@ -1,16 +1,27 @@
 <script lang="ts">
   import Icon from '../lib/Icon.svelte';
   import Cartridge from '../lib/Cartridge.svelte';
-  import { fa, type Course } from '../lib/lessons';
+  import { fa, type Collection, type Course } from '../lib/lessons';
   export let course: Course;
+  export let collections: Collection[] = [];
   export let onstudy: (position: number) => void;
   export let onback: () => void;
   export let onarchive: () => void;
   export let ondelete: () => void;
   export let onrename: (title: string) => void;
+  export let oncollectionchange: (collectionId: string | null) => void;
   let editing = false;
   let newTitle = course.title;
   $: chapters = [...new Set(course.cards.map((card) => card.chapter))];
+  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()) {
+    return collections
+      .filter((item) => item.parentId === parentId && !path.has(item.id))
+      .flatMap((item) => {
+        const nextPath = new Set(path).add(item.id);
+        return [{ collection: item, depth }, ...flatten(item.id, depth + 1, nextPath)];
+      });
+  }
+  $: collectionTree = flatten();
 </script>
 
 <div class="detail-page page">
@@ -43,6 +54,14 @@
   <p class="detail-summary">
     {course.description} · {fa(chapters.length)} فصل · {fa(course.cards.length)} کارت
   </p>
+  <label class="detail-collection">کالکشن درس
+    <select aria-label="کالکشن درس" value={course.collectionId ?? ''} onchange={(event) => oncollectionchange(event.currentTarget.value || null)}>
+      <option value="">بدون کالکشن</option>
+      {#each collectionTree as node}<option value={node.collection.id}
+          >{'　'.repeat(node.depth)}{node.collection.name}</option
+        >{/each}
+    </select>
+  </label>
   <div class="chapter-list">
     {#each chapters as chapter, index}{@const cards = course.cards.filter(
         (card) => card.chapter === chapter,
