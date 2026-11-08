@@ -2,6 +2,7 @@
   import Icon from '../lib/Icon.svelte';
   import Cartridge from '../lib/Cartridge.svelte';
   import { fa, type Collection, type Course } from '../lib/lessons';
+  type CollectionNode = { collection: Collection; depth: number };
   export let course: Course;
   export let collections: Collection[] = [];
   export let onstudy: (position: number) => void;
@@ -13,7 +14,7 @@
   let editing = false;
   let newTitle = course.title;
   $: chapters = [...new Set(course.cards.map((card) => card.chapter))];
-  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()) {
+  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()): CollectionNode[] {
     return collections
       .filter((item) => item.parentId === parentId && !path.has(item.id))
       .flatMap((item) => {

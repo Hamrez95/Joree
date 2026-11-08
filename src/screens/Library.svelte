@@ -3,6 +3,7 @@
   import Heading from '../lib/Heading.svelte';
   import Cartridge from '../lib/Cartridge.svelte';
   import { fa, normalizeSearch, type Collection, type Course } from '../lib/lessons';
+  type CollectionNode = { collection: Collection; depth: number };
   export let courses: Course[];
   export let collections: Collection[];
   export let onopen: (course: Course) => void;
@@ -21,7 +22,7 @@
   let parentSelection = '';
   let collectionError = '';
   $: selectedCollection = collections.find((item) => item.id === selectedCollectionId) ?? null;
-  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()) {
+  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()): CollectionNode[] {
     return collections
       .filter((item) => item.parentId === parentId && !path.has(item.id))
       .sort((first, second) => first.name.localeCompare(second.name, 'fa'))

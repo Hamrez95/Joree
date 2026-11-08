@@ -1,6 +1,5 @@
 <script lang="ts">
   import Icon from '../lib/Icon.svelte';
-  import Decor from '../lib/Decor.svelte';
   import LessonContent from '../lib/LessonContent.svelte';
   import { fa, type Card, type Course, type Review } from '../lib/lessons';
   export let course: Course;
@@ -53,19 +52,16 @@
       onclick={onbookmark}><Icon name="bookmark" /></button
     >
   </div>
-  <div class="study-cloud left-cloud"><Decor /></div>
-  <div class="study-cloud right-cloud"><Decor /></div>
   {#if card.question}<div class="question-label blue">
       <Icon name={revealed ? 'check' : 'cap'} />{revealed ? 'پاسخ' : 'خودت را امتحان کن'}
     </div>{/if}
   {#key card.id}<div class="flashcard-content">
-      <h1 class:underlined={!revealed}>{card.question && revealed ? '' : card.title}</h1>
+      <h1>{card.question && revealed ? '' : card.title}</h1>
       <!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard users need to focus and scroll the reading region.) -->
       <div class="flashcard-body" tabindex="0" role="region" aria-label="محتوای آموزشی">
         <LessonContent text={card.question && revealed ? card.answer ?? '' : card.body} />
       </div>
     </div>{/key}
-  <div class="study-star"><Decor type="star" /></div>
   {#if card.question && !revealed}<button class="yellow reveal-button" onclick={onreveal}
       ><Icon name="eye" />نمایش پاسخ</button
     >{:else if card.question && revealed}<div class="rating-buttons">

@@ -3,13 +3,14 @@
   import Heading from '../lib/Heading.svelte';
   import Decor from '../lib/Decor.svelte';
   import { parseLesson, fa, type Collection, type Course } from '../lib/lessons';
+  type CollectionNode = { collection: Collection; depth: number };
   export let onimport: (course: Course) => void;
   export let onerror: (message: string) => void;
   export let collections: Collection[] = [];
   export let initialCollectionId: string | null = null;
   let collectionSelection = '';
   $: collectionSelection = initialCollectionId ?? '';
-  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()) {
+  function flatten(parentId: string | null = null, depth = 0, path: Set<string> = new Set()): CollectionNode[] {
     return collections
       .filter((item) => item.parentId === parentId && !path.has(item.id))
       .flatMap((item) => {

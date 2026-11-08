@@ -22,14 +22,14 @@ The app is **Persian-first and right-to-left**. These docs speak English; the co
 
 ## Download & get cozy
 
-**Current preview: v0.3.3 · Windows x64**
+**Current preview: v0.3.4 · Windows x64**
 
 | Pick your adventure              | Download                                                                                                      |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Install for your Windows account | [**JoreeSetup.exe**](https://github.com/Hamrez95/Joree/releases/download/v0.3.3/JoreeSetup.exe)               |
-| Extract and run                  | [Joree-0.3.3-win-x64.zip](https://github.com/Hamrez95/Joree/releases/download/v0.3.3/Joree-0.3.3-win-x64.zip) |
-| Write your first lesson          | [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.3/Joree-lesson-template.md)        |
-| Check the download hashes        | [SHA256SUMS.txt](https://github.com/Hamrez95/Joree/releases/download/v0.3.3/SHA256SUMS.txt)                   |
+| Install for your Windows account | [**JoreeSetup.exe**](https://github.com/Hamrez95/Joree/releases/download/v0.3.4/JoreeSetup.exe)               |
+| Extract and run                  | [Joree-0.3.4-win-x64.zip](https://github.com/Hamrez95/Joree/releases/download/v0.3.4/Joree-0.3.4-win-x64.zip) |
+| Write your first lesson          | [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.4/Joree-lesson-template.md)        |
+| Check the download hashes        | [SHA256SUMS.txt](https://github.com/Hamrez95/Joree/releases/download/v0.3.4/SHA256SUMS.txt)                   |
 
 ### Before the first sip
 
@@ -76,6 +76,7 @@ More captures: [docs/screenshots](docs/screenshots). Original designs: [referenc
 
 - **A cartridge-style library.** Search Persian course names, filter your shelf, open chapters, and continue where you left off.
 - **A shelf with branches.** Group lessons into nested collections such as AI → Agents or create a separate Ladder collection. Pick a collection when importing or move a lesson later.
+- **Room for the good stuff.** A slimmer console frame and quieter study controls keep the lesson text front and center.
 - **Short study cards.** Read, go back, move forward, and adjust the text size.
 - **Think → reveal → rate.** Mark an answer as familiar, hesitant, or worth another try; review dates follow your response.
 - **Notes and bookmarks.** Keep the thought you don't want to lose next to its card.
@@ -121,7 +122,7 @@ PDF, Word, and PowerPoint aren't direct lesson inputs yet. Convert their content
 
 | Item                               | Location                                   |
 | ---------------------------------- | ------------------------------------------ |
-| Installed app                      | `%LOCALAPPDATA%\Programs\Joree\app-0.3.3\` |
+| Installed app                      | `%LOCALAPPDATA%\Programs\Joree\app-0.3.4\` |
 | Learning database                  | `%LOCALAPPDATA%\Joree\learning.sqlite3`    |
 | Window position                    | `%LOCALAPPDATA%\Joree\window.json`         |
 | Host error log, if an error occurs | `%LOCALAPPDATA%\Joree\errors.log`          |
