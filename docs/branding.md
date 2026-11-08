@@ -14,4 +14,3 @@
 ## Repository promo artwork
 
 The English hero and brain-break illustration are in docs/media. They use the built-in image generation tool; exact prompts are in docs/media/prompts.md. Both are labeled as promotional artwork, separately from actual screenshots.
-
