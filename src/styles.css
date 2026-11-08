@@ -4069,3 +4069,8 @@ html, body { overflow-x: hidden; }
   .settings-footer { min-height: 39px; }
   .detail-collection, .import-collection { font-size: 12px; }
 }
+
+/* Keep resize-corner hit targets behind the clickable window controls. */
+.console-header .brand,
+.console-header .arcade-link { z-index: 21; }
+.console-header .window-controls { position: relative; z-index: 21; }

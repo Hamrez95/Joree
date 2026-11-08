@@ -24,14 +24,14 @@ When Joree is running in the background, press **Ctrl+J** to show or hide it.
 
 ## Download & get cozy
 
-**Current preview: v0.3.7 · Windows x64**
+**Current preview: v0.3.8 · Windows x64**
 
 | Pick your adventure              | Download                                                                                                      |
 | -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Install for your Windows account | [**JoreeSetup.exe**](https://github.com/Hamrez95/Joree/releases/download/v0.3.7/JoreeSetup.exe)               |
-| Extract and run                  | [Joree-0.3.7-win-x64.zip](https://github.com/Hamrez95/Joree/releases/download/v0.3.7/Joree-0.3.7-win-x64.zip) |
-| Write your first lesson          | [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.7/Joree-lesson-template.md)        |
-| Check the download hashes        | [SHA256SUMS.txt](https://github.com/Hamrez95/Joree/releases/download/v0.3.7/SHA256SUMS.txt)                   |
+| Install for your Windows account | [**JoreeSetup.exe**](https://github.com/Hamrez95/Joree/releases/download/v0.3.8/JoreeSetup.exe)               |
+| Extract and run                  | [Joree-0.3.8-win-x64.zip](https://github.com/Hamrez95/Joree/releases/download/v0.3.8/Joree-0.3.8-win-x64.zip) |
+| Write your first lesson          | [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.8/Joree-lesson-template.md)        |
+| Check the download hashes        | [SHA256SUMS.txt](https://github.com/Hamrez95/Joree/releases/download/v0.3.8/SHA256SUMS.txt)                   |
 
 ### Before the first sip
 
@@ -126,7 +126,7 @@ PDF, Word, and PowerPoint aren't direct lesson inputs yet. Convert their content
 
 | Item                               | Location                                   |
 | ---------------------------------- | ------------------------------------------ |
-| Installed app                      | `%LOCALAPPDATA%\Programs\Joree\app-0.3.7\` |
+| Installed app                      | `%LOCALAPPDATA%\Programs\Joree\app-0.3.8\` |
 | Learning database                  | `%LOCALAPPDATA%\Joree\learning.sqlite3`    |
 | Window position                    | `%LOCALAPPDATA%\Joree\window.json`         |
 | Host error log, if an error occurs | `%LOCALAPPDATA%\Joree\errors.log`          |
