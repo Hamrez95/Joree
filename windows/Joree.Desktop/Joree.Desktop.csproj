@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType><TargetFramework>net10.0-windows</TargetFramework><UseWindowsForms>true</UseWindowsForms>
-    <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><AssemblyName>Joree</AssemblyName><Version>0.2.3</Version>
+    <Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings><AssemblyName>Joree</AssemblyName>
     <ApplicationIcon>../../src-tauri/icons/icon.ico</ApplicationIcon><ApplicationManifest>app.manifest</ApplicationManifest>
     <PlatformTarget>x64</PlatformTarget><RuntimeIdentifier>win-x64</RuntimeIdentifier><SelfContained>false</SelfContained>
     <NuGetAudit>false</NuGetAudit><RestorePackagesWithLockFile>true</RestorePackagesWithLockFile><ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>

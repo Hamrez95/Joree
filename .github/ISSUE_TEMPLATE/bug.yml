@@ -1,0 +1,33 @@
+name: Something spilled
+description: Report a bug in the little console.
+title: '[Bug]: '
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Joree version
+      placeholder: v0.2.3
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version and install route
+      placeholder: Windows 11 x64, JoreeSetup.exe
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can we reproduce it?
+      description: Include the steps and a small example lesson if import is involved.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot or extra context

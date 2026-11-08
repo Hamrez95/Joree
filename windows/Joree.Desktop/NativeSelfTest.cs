@@ -28,7 +28,8 @@ internal static class NativeSelfTest
             if (!monitors[0].Contains(position)) throw new Exception("Missing-monitor recovery failed");
             checks.Add("missing-monitor-recovery");
             var placement = Path.Combine(directory, "window.json"); WindowPlacement.Save(placement, position);
-            if (WindowPlacement.Read(placement).Size != position.Size) throw new Exception("Window persistence failed");
+            var expectedPlacement=WindowPlacement.Clamp(position,Screen.AllScreens.Select(screen=>screen.WorkingArea).ToArray());
+            if (WindowPlacement.Read(placement) != expectedPlacement) throw new Exception("Window persistence failed");
             checks.Add("window-persistence");
             var elevated = new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
             File.WriteAllText(Path.Combine(directory, "result.json"), JsonSerializer.Serialize(new { success=true, elevated, checks }));

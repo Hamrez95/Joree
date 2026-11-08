@@ -10,7 +10,7 @@ namespace Joree.Setup;
 
 internal static class Program
 {
-    private const string Version = "0.2.3";
+    private static readonly string Version = Assembly.GetExecutingAssembly().GetName().Version!.ToString(3);
     private const string RegistryPath = @"Software\Microsoft\Windows\CurrentVersion\Uninstall\Joree";
     private static readonly string Local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private static readonly string InstallRoot = Path.Combine(Local, "Programs", "Joree");

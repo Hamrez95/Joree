@@ -10,3 +10,8 @@
 - بازتولید خروجی ICO از تصویر موجود: `powershell.exe -NoProfile -File scripts/export-app-icon.ps1`
 
 متن پرامپت در `docs/branding-prompt.txt` نگه داشته شده است. تولید دوباره ممکن است خروجی متفاوتی بدهد؛ تصویر اصلی نسخه‌بندی شده است.
+
+## Repository promo artwork
+
+The English hero and brain-break illustration are in docs/media. They use the built-in image generation tool; exact prompts are in docs/media/prompts.md. Both are labeled as promotional artwork, separately from actual screenshots.
+

@@ -1,0 +1,17 @@
+name: A fresh little idea
+description: Suggest a feature or improvement.
+title: '[Idea]: '
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What would you like to do?
+      description: Tell us about the study situation or problem first.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What might make it better?
+    validations:
+      required: true
