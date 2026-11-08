@@ -42,6 +42,13 @@
   class:tall-import={page === 'import'}
 >
   <main class="console theme-{color}" class:compact aria-label="کنسول یادگیری جرعه">
+    {#if isDesktop()}
+      <div class="resize-handles" aria-hidden="true">
+        {#each ['n', 's', 'w', 'e', 'nw', 'ne', 'sw', 'se'] as edge}
+          <div class="resize-handle resize-{edge}" data-resize-edge={edge}></div>
+        {/each}
+      </div>
+    {/if}
     <div class="peach-edge"><i></i><i></i><i></i></div>
     <header class="console-header" data-tauri-drag-region>
       <button class="brand" aria-label="کتابخانهٔ جرعه" onclick={() => onnav('library')}

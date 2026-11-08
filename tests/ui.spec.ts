@@ -190,3 +190,22 @@ test('long lessons show local diagrams, clickable sources, and downloadable prac
   await page.getByRole('link', { name: 'آزمایش اجرایی' }).click();
   expect((await downloadPromise).suggestedFilename()).toBe('lab.mjs');
 });
+
+test('window sizes and compact mode have no horizontal scrolling inside the console', async ({ page }) => {
+  await ready(page);
+  for (const compact of [false, true]) {
+    if (compact) await page.getByRole('button', { name: 'حالت کوچک مطالعه' }).click();
+    for (const [width, height] of [[570, 465], [800, 600], [1280, 900], [390, 844]]) {
+      await page.setViewportSize({ width, height });
+      for (const destination of ['کتابخانه', 'تنظیمات', 'پیشرفت', 'مرور کارت‌ها']) {
+        await page.getByRole('button', { name: destination, exact: true }).click();
+        const scrollbars = await page.locator('.console-screen').evaluate(screen =>
+          [screen, ...screen.querySelectorAll('*')].filter(element => {
+            const style = getComputedStyle(element);
+            return ['auto', 'scroll'].includes(style.overflowX) && element.scrollWidth > element.clientWidth + 1;
+          }).map(element => element.className));
+        expect(scrollbars, `${destination}: ${width}x${height}, compact=${compact}`).toEqual([]);
+      }
+    }
+  }
+});

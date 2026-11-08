@@ -17,6 +17,10 @@ internal sealed class MainForm : Form
     private bool exiting, compact, ready;
     private readonly bool forceTopMost;
     private Rectangle expandedBounds;
+    protected override CreateParams CreateParams
+    {
+        get { var parameters = base.CreateParams; parameters.Style |= 0x00040000; return parameters; }
+    }
 
     public MainForm(bool forceTopMost=false)
     {
@@ -115,9 +119,21 @@ internal sealed class MainForm : Form
             case "pin": TopMost = forceTopMost || payload.GetProperty("enabled").GetBoolean(); return true;
             case "compact": SetCompact(payload.GetProperty("enabled").GetBoolean()); return true;
             case "drag": ReleaseCapture(); SendMessage(Handle, 0xA1, new IntPtr(2), IntPtr.Zero); return true;
+            case "resize": BeginResize(payload.GetProperty("edge").GetString()); return true;
             case "dataPath": return AppPaths.DataDirectory;
             default: throw new InvalidOperationException("فرمان ناشناخته است.");
         }
+    }
+    private void BeginResize(string? edge)
+    {
+        var hit = edge switch { "w" => 10, "e" => 11, "n" => 12, "nw" => 13, "ne" => 14, "s" => 15, "sw" => 16, "se" => 17, _ => 0 };
+        if (hit == 0 || WindowState != FormWindowState.Normal) return;
+        // Reply to WebView before entering Windows' modal size loop.
+        BeginInvoke(() => {
+            var point = Cursor.Position;
+            var coordinates = new IntPtr((point.Y & 0xffff) << 16 | (point.X & 0xffff));
+            ReleaseCapture(); SendMessage(Handle, 0xA1, new IntPtr(hit), coordinates);
+        });
     }
     private void SetCompact(bool enabled)
     {
@@ -178,6 +194,8 @@ internal sealed class MainForm : Form
     }
     protected override void WndProc(ref Message message)
     {
+        // Retain the native size loop without drawing a standard title bar or border.
+        if (message.Msg == 0x83 && message.WParam != IntPtr.Zero) { message.Result = IntPtr.Zero; return; }
         if(message.Msg==0x8042){exiting=true;Close();return;}
         base.WndProc(ref message);
     }

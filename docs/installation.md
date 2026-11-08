@@ -4,10 +4,10 @@ Your cozy study console, with a very ordinary install process.
 
 ## Downloads
 
-- [Windows installer](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/JoreeSetup.exe)
-- [Extract-and-run ZIP](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/Joree-0.3.0-win-x64.zip)
-- [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/Joree-lesson-template.md)
-- [Checksums](https://github.com/Hamrez95/Joree/releases/download/v0.3.0/SHA256SUMS.txt)
+- [Windows installer](https://github.com/Hamrez95/Joree/releases/download/v0.3.2/JoreeSetup.exe)
+- [Extract-and-run ZIP](https://github.com/Hamrez95/Joree/releases/download/v0.3.2/Joree-0.3.2-win-x64.zip)
+- [Lesson template](https://github.com/Hamrez95/Joree/releases/download/v0.3.2/Joree-lesson-template.md)
+- [Checksums](https://github.com/Hamrez95/Joree/releases/download/v0.3.2/SHA256SUMS.txt)
 - [All releases](https://github.com/Hamrez95/Joree/releases)
 
 ## Before installing
@@ -24,7 +24,7 @@ Preview builds are unsigned. If your organization disallows the executable, obta
 2. Confirm the per-user installation.
 3. Open **جرعه** on the desktop or **Joree** in Start.
 
-The app installs into `%LOCALAPPDATA%\Programs\Joree\app-0.3.0`. Windows Installed apps lists it as **جرعه / Joree**.
+The app installs into `%LOCALAPPDATA%\Programs\Joree\app-0.3.2`. Windows Installed apps lists it as **جرعه / Joree**.
 
 For the ZIP, extract the entire folder and launch `Joree.exe`. Keep its supporting files and `web/` directory together. That route doesn't create shortcuts or register an uninstall entry.
 

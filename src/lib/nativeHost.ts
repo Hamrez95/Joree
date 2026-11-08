@@ -65,6 +65,14 @@ export function attachWindowsChrome(onError: (error: unknown) => void): () => vo
     void nativeRequest('drag').catch(onError);
   };
   document.addEventListener('mousedown', drag);
+  const resize = (event: PointerEvent) => {
+    if (event.button !== 0 || !(event.target instanceof Element)) return;
+    const edge = event.target.closest<HTMLElement>('[data-resize-edge]')?.dataset.resizeEdge;
+    if (!edge) return;
+    event.preventDefault();
+    void nativeRequest('resize', { edge }).catch(onError);
+  };
+  document.addEventListener('pointerdown', resize);
   void nativeRequest('ready').then(shape).catch(onError);
-  return () => { observer.disconnect(); document.removeEventListener('mousedown', drag); };
+  return () => { observer.disconnect(); document.removeEventListener('mousedown', drag); document.removeEventListener('pointerdown', resize); };
 }

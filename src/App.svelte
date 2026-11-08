@@ -34,6 +34,9 @@
   let compact = false;
   let settingsTheme = false;
   let scale = 1;
+  let layoutWidth = 824;
+  let layoutHeight = 824;
+  let smallViewport = false;
   let toast = '';
   let toastError = false;
   let toastTimeout: ReturnType<typeof setTimeout>;
@@ -77,15 +80,13 @@
     }
   }
   function resize() {
-    const height = compact ? 430 : page === 'settings' ? (settingsTheme ? 734 : 954) : page === 'import' ? 894 : page==='arcade' ? 914 : 834;
-    scale = Math.max(
-      0.3,
-      Math.min(
-        1,
-        (window.innerWidth - 42) / (compact ? 540 : 824),
-        (window.innerHeight - 35) / height,
-      ),
-    );
+    const availableWidth = Math.max(280, window.innerWidth - 40);
+    const availableHeight = Math.max(300, window.innerHeight - 39);
+    const baseWidth = compact ? 540 : Math.min(824, Math.max(600, availableWidth));
+    scale = Math.min(1, availableWidth / baseWidth, availableHeight / (compact ? 430 : 620));
+    layoutWidth = availableWidth / scale;
+    layoutHeight = availableHeight / scale;
+    smallViewport = window.innerWidth <= 700 || window.innerHeight <= 550;
   }
   $: if (loaded) {
     page;
@@ -354,6 +355,9 @@
 <div
   class="workspace"
   style:--scale={scale}
+  style:--layout-width={`${layoutWidth}px`}
+  style:--layout-height={`${layoutHeight}px`}
+  class:small-viewport={smallViewport}
   class:motion-off={state.preferences.motion === 'off'}
   class:motion-reduced={state.preferences.motion === 'reduced'}
   class:small-mode={compact}
