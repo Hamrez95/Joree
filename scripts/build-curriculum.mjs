@@ -14,7 +14,7 @@ function makeCard(block, index, id, count) {
 }
 
 async function makeCourse(file) {
-  const markdown = await readFile(new URL(file, root), 'utf8');
+  const markdown = (await readFile(new URL(file, root), 'utf8')).replace(/\r\n/g, '\n');
   const id = 'company-ai-' + file.slice(0, 2);
   const blocks = markdown.trim().split(/^\s*---\s*$/m);
   const cards = blocks.map((block, index) => makeCard(block, index, id, blocks.length));
@@ -24,13 +24,13 @@ async function makeCourse(file) {
 const courses = [];
 for (const file of files) courses.push(await makeCourse(file));
 const sources = [];
-for (const file of files) sources.push((await readFile(new URL(file, root), 'utf8')).trim());
+for (const file of files) sources.push((await readFile(new URL(file, root), 'utf8')).replace(/\r\n/g, '\n').trim());
 const complete = '# هوش مصنوعی شرکتی؛ از مبانی تا پروژهٔ قابل‌آزمایش\n\nاین مجموعه، هشت درس پیوسته برای شروع کار با مدل‌های زبانی، بازیابی اسناد، زیرساخت داخلی و ایجنت‌هاست. درس‌ها را به ترتیب بخونید و تمرین‌های پایان هر درس را انجام بدید. مثال‌ها ساختگی‌ان و منابع کنار توضیح مربوط قرار دارن.\n\n---\n\n' + sources.join('\n\n---\n\n') + '\n';
 const generated = '// Generated from public/lessons/company-ai/*.md by scripts/build-curriculum.mjs.\nexport const curriculum = ' + JSON.stringify(courses, null, 2) + ';\n';
 const output = new URL('../src/lib/curriculum.ts', import.meta.url);
 const completeOutput = new URL('company-ai-complete.md', root);
 if (process.argv.includes('--check')) {
-  if (await readFile(output, 'utf8') !== generated) throw new Error('Run node scripts/build-curriculum.mjs to refresh curriculum.');
-  if (await readFile(completeOutput, 'utf8') !== complete) throw new Error('Combined Markdown is out of date.');
+  if ((await readFile(output, 'utf8')).replace(/\r\n/g, '\n') !== generated) throw new Error('Run node scripts/build-curriculum.mjs to refresh curriculum.');
+  if ((await readFile(completeOutput, 'utf8')).replace(/\r\n/g, '\n') !== complete) throw new Error('Combined Markdown is out of date.');
 } else { await writeFile(output, generated); await writeFile(completeOutput, complete); }
 console.log(`${courses.length} lessons, ${courses.reduce((sum, course) => sum + course.cards.length, 0)} cards`);
